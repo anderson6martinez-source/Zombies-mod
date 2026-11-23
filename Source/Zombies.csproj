@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Zombies</AssemblyName>
+    <RootNamespace>Game</RootNamespace>
+    <LangVersion>8.0</LangVersion>
+    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- DLLs del juego (de tu SC 2.3 / API 1.5), copialas a /libs -->
+    <Reference Include="Survivalcraft"><HintPath>../libs/Survivalcraft.dll</HintPath></Reference>
+    <Reference Include="EntitySystem"><HintPath>../libs/EntitySystem.dll</HintPath></Reference>
+    <Reference Include="Engine"><HintPath>../libs/Engine.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>
