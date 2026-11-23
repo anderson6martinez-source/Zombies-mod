@@ -46,6 +46,10 @@ namespace Game
             base.Initialize();
         }
 
+        public override void GenerateTerrainVertices(BlockGeometryGenerator generator, TerrainGeometry geometry, int value, int x, int y, int z)
+        {
+        }
+
         public override void DrawBlock(PrimitivesRenderer3D primitivesRenderer, int value, Color color, float size, ref Matrix matrix, DrawBlockEnvironmentData environmentData)
         {
             BlocksManager.DrawMeshBlock(primitivesRenderer, m_mesh, m_texture, color, 2f * size, ref matrix, environmentData);
@@ -114,6 +118,10 @@ namespace Game
             }
             m_texture = ContentManager.Get<Texture2D>("Textures/Pistola");
             base.Initialize();
+        }
+
+        public override void GenerateTerrainVertices(BlockGeometryGenerator generator, TerrainGeometry geometry, int value, int x, int y, int z)
+        {
         }
 
         public override void DrawBlock(PrimitivesRenderer3D primitivesRenderer, int value, Color color, float size, ref Matrix matrix, DrawBlockEnvironmentData environmentData)

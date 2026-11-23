@@ -65,7 +65,7 @@ namespace Game
         float m_timer;
         Dictionary<ComponentPlayer, int> m_pending = new Dictionary<ComponentPlayer, int>();
 
-        public int UpdateOrder { get { return 0; } }
+        public UpdateOrder UpdateOrder { get { return UpdateOrder.Default; } }
 
         public override void Load(ValuesDictionary valuesDictionary)
         {
