@@ -224,7 +224,7 @@ namespace Game
                 Vector3 pos = s.P.Position;
                 bool hit = false;
                 foreach (ComponentPlayer player in m_subsystemPlayers.ComponentPlayers)
-                    if (HitSomething(s, player.ComponentCreature, pos)) { hit = true; break; }
+                    if (HitSomething(s, player, pos)) { hit = true; break; }
                 if (!hit)
                     foreach (ComponentCreature creature in m_subsystemCreatureSpawn.Creatures)
                         if (HitSomething(s, creature, pos)) { hit = true; break; }
@@ -237,7 +237,7 @@ namespace Game
         {
             UpdateSpecials(dt);
             UpdateSpits(dt);
-            int day = m_subsystemTimeOfDay.Day;
+            int day = (int)m_subsystemTimeOfDay.Day;
             if (m_firstDay < 0) m_firstDay = day;
             bool night = m_subsystemSky.SkyLightValue <= NightSkyLight;
 
@@ -246,7 +246,7 @@ namespace Game
                 if (night && day != m_lastWaveDay && m_subsystemPlayers.ComponentPlayers.Count > 0)
                 {
                     m_lastWaveDay = day; // se tira el dado una sola vez por noche
-                    if (m_random.UniformFloat(0f, 1f) < WaveChance) StartWave(day);
+                    if (m_random.Float(0f, 1f) < WaveChance) StartWave(day);
                 }
                 return;
             }
@@ -295,8 +295,8 @@ namespace Game
         bool TrySpawn(ComponentPlayer player)
         {
             Vector3 p = player.ComponentBody.Position;
-            float angle = m_random.UniformFloat(0f, 6.2831855f);
-            float dist = m_random.UniformFloat(MinDistance, MaxDistance);
+            float angle = m_random.Float(0f, 6.2831855f);
+            float dist = m_random.Float(MinDistance, MaxDistance);
             int x = (int)MathUtils.Floor(p.X + MathUtils.Cos(angle) * dist);
             int z = (int)MathUtils.Floor(p.Z + MathUtils.Sin(angle) * dist);
 
@@ -309,20 +309,20 @@ namespace Game
             Entity entity = DatabaseManager.CreateEntity(Project, name, true);
             ComponentBody body = entity.FindComponent<ComponentBody>(true);
             body.Position = new Vector3(x + 0.5f, y, z + 0.5f);
-            body.Rotation = Quaternion.CreateFromAxisAngle(Vector3.UnitY, m_random.UniformFloat(0f, 6.2831855f));
+            body.Rotation = Quaternion.CreateFromAxisAngle(Vector3.UnitY, m_random.Float(0f, 6.2831855f));
             Project.AddEntity(entity);
 
             // que vayan directo al jugador
             ComponentCreature creature = entity.FindComponent<ComponentCreature>(false);
             ComponentChaseBehavior chase = entity.FindComponent<ComponentChaseBehavior>(false);
             if (creature != null && chase != null)
-                chase.Attack(player.ComponentCreature, 100f, 120f, false);
+                chase.Attack(player, 100f, 120f, false);
             return true;
         }
 
         string PickZombie()
         {
-            float r = m_random.UniformFloat(0f, 1f);
+            float r = m_random.Float(0f, 1f);
             float bruto = MathUtils.Min(0.05f * (m_waveNumber - 2), 0.30f);   // desde la oleada 3
             float corredor = MathUtils.Min(0.20f + 0.03f * m_waveNumber, 0.40f);
             float gordo = m_waveNumber >= 2 ? MathUtils.Min(0.04f * (m_waveNumber - 1), 0.20f) : 0f; // desde la oleada 2
