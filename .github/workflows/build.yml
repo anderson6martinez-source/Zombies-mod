@@ -1,0 +1,26 @@
+name: Compilar mod Zombies
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Compilar DLL
+        run: dotnet build Source/Zombies.csproj -c Release -o out
+      - name: Empaquetar .scmod
+        run: |
+          mkdir pack
+          cp modinfo.json Zombies.xdb pack/
+          cp -r Assets pack/
+          cp Piedra.clo pack/
+          cp out/Zombies.dll pack/
+          cd pack && zip -r ../Zombies.scmod .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Zombies-scmod
+          path: Zombies.scmod
