@@ -1,0 +1,11 @@
+{
+  "Name": "Zombies",
+  "Version": "0.1.0",
+  "ApiVersion": "1.5",
+  "Description": "Zombis: normal, corredor y bruto",
+  "ScVersion": "2.3",
+  "Link": "",
+  "Author": "",
+  "PackageName": "survivalcraft",
+  "Dependencies": []
+}
