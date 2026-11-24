@@ -20,6 +20,11 @@ namespace Game
         private const float RotY = 180f;
         private const float RotZ = 0f;
 
+        // Tamano en la mano y en el mundo (el modelo mide 0.5 de largo: 0.7 = 35 cm).
+        private const float HandSize = 0.7f;
+        // El inventario usaba tamano 2; se compensa para que el icono se vea igual que antes.
+        private const float IconSize = 2f;
+
         private BlockMesh m_mesh = new BlockMesh();
         private Texture2D m_texture;
 
@@ -30,6 +35,17 @@ namespace Game
             IsAimable = true;
             IsPlaceable = false;   // es un item, no se coloca como bloque
             IsCollidable = false;
+
+            // Primera persona: abajo a la derecha, como el bate.
+            // X = derecha, Y = arriba (negativo = abajo), Z = hacia el frente (negativo = lejos de la camara).
+            FirstPersonScale = 1f;
+            FirstPersonOffset = new Vector3(0.5f, -0.4f, -0.65f);
+            FirstPersonRotation = new Vector3(0f, 0f, 0f);
+        }
+
+        public override float GetIconViewScale(int value, DrawBlockEnvironmentData environmentData)
+        {
+            return IconSize / HandSize;
         }
 
         public override void Initialize()
@@ -54,30 +70,43 @@ namespace Game
 
         public override void DrawBlock(PrimitivesRenderer3D primitivesRenderer, int value, Color color, float size, ref Matrix matrix, DrawBlockEnvironmentData environmentData)
         {
-            BlocksManager.DrawMeshBlock(primitivesRenderer, m_mesh, m_texture, color, 2f * size, ref matrix, environmentData);
+            BlocksManager.DrawMeshBlock(primitivesRenderer, m_mesh, m_texture, color, HandSize * size, ref matrix, environmentData);
         }
 
-        // El bit 0 de los datos indica si esta cargada (los bits altos guardan el desgaste)
+        // Cargador: balas dentro de la pistola, en los 4 bits bajos de los datos
+        // (los bits altos guardan el desgaste).
+        public const int MaxAmmo = 8;
+
+        public static int GetAmmo(int value)
+        {
+            return Terrain.ExtractData(value) & 15;
+        }
+
+        public static int SetAmmo(int value, int ammo)
+        {
+            int data = (Terrain.ExtractData(value) & ~15) | MathUtils.Clamp(ammo, 0, MaxAmmo);
+            return Terrain.MakeBlockValue(Terrain.ExtractContents(value), 0, data);
+        }
+
+        // Compatibilidad con codigo que ya usaba estos metodos
         public static bool IsLoaded(int value)
         {
-            return (Terrain.ExtractData(value) & 1) != 0;
+            return GetAmmo(value) > 0;
         }
 
         public static int SetLoaded(int value, bool loaded)
         {
-            int data = Terrain.ExtractData(value);
-            data = loaded ? (data | 1) : (data & ~1);
-            return Terrain.MakeBlockValue(Terrain.ExtractContents(value), 0, data);
+            return SetAmmo(value, loaded ? MaxAmmo : 0);
         }
 
         public override string GetDisplayName(SubsystemTerrain subsystemTerrain, int value)
         {
-            return IsLoaded(value) ? "Pistola (cargada)" : "Pistola";
+            return "Pistola (" + GetAmmo(value) + "/" + MaxAmmo + ")";
         }
 
         public override string GetDescription(int value)
         {
-            return "Pistola. Mantén apuntar para cargar una bala del inventario, como una ballesta; suelta para disparar. 65 usos.";
+            return "Pistola de " + MaxAmmo + " balas. Toca rápido para disparar. Mantén apuntando un momento para recargar con las balas del inventario. 65 usos.";
         }
 
         public override string GetCategory(int value)
@@ -110,6 +139,11 @@ namespace Game
     {
         public const int Index = 761;
 
+        // Tamano en la mano y en el mundo (el modelo mide 0.2 de largo: 0.6 = 12 cm).
+        private const float HandSize = 0.6f;
+        // El inventario usaba tamano 4; se compensa para que el icono se vea igual que antes.
+        private const float IconSize = 4f;
+
         private BlockMesh m_mesh = new BlockMesh();
         private Texture2D m_texture;
 
@@ -117,6 +151,16 @@ namespace Game
         {
             IsPlaceable = false;   // es un item, no se coloca como bloque
             IsCollidable = false;
+
+            // Primera persona: abajo a la derecha, como el bate.
+            FirstPersonScale = 1f;
+            FirstPersonOffset = new Vector3(0.5f, -0.4f, -0.65f);
+            FirstPersonRotation = new Vector3(0f, 0f, 0f);
+        }
+
+        public override float GetIconViewScale(int value, DrawBlockEnvironmentData environmentData)
+        {
+            return IconSize / HandSize;
         }
 
         public override void Initialize()
@@ -138,7 +182,7 @@ namespace Game
 
         public override void DrawBlock(PrimitivesRenderer3D primitivesRenderer, int value, Color color, float size, ref Matrix matrix, DrawBlockEnvironmentData environmentData)
         {
-            BlocksManager.DrawMeshBlock(primitivesRenderer, m_mesh, m_texture, color, 4f * size, ref matrix, environmentData);
+            BlocksManager.DrawMeshBlock(primitivesRenderer, m_mesh, m_texture, color, HandSize * size, ref matrix, environmentData);
         }
 
         public override float GetProjectilePower(int value)
@@ -253,13 +297,15 @@ namespace Game
 
     public class SubsystemPistolaBlockBehavior : SubsystemBlockBehavior
     {
-        // Segundos que hay que mantener apuntando para cargar una bala
-        private const double ReloadTime = 0.8;
+        // Segundos que hay que mantener apuntando para recargar (menos que eso = disparo)
+        private const double ReloadHold = 0.6;
+
+        private class AimInfo { public double Start; public double Last; public bool Reloaded; public bool Warned; }
 
         private SubsystemProjectiles m_subsystemProjectiles;
         private SubsystemAudio m_subsystemAudio;
         private Random m_random = new Random();
-        private Dictionary<ComponentMiner, double> m_aimStart = new Dictionary<ComponentMiner, double>();
+        private Dictionary<ComponentMiner, AimInfo> m_aims = new Dictionary<ComponentMiner, AimInfo>();
 
         public override int[] HandledBlocks
         {
@@ -273,11 +319,15 @@ namespace Game
             m_subsystemAudio = Project.FindSubsystem<SubsystemAudio>(true);
         }
 
-        // Como un arco/ballesta: al apuntar se carga una bala del inventario; al soltar se dispara.
+        private static void Say(ComponentMiner miner, string text)
+        {
+            ComponentPlayer player = miner.ComponentPlayer;
+            if (player != null) player.ComponentGui.DisplaySmallMessage(text, Color.White, false, false);
+        }
+
+        // Toque rapido = dispara. Mantener apuntando = recarga con las balas del inventario.
         public override bool OnAim(Ray3 aim, ComponentMiner componentMiner, AimState state)
         {
-            Vector3 start = aim.Position;
-            Vector3 direction = aim.Direction;
             IInventory inventory = componentMiner.Inventory;
             if (inventory == null) return false;
             int slot = inventory.ActiveSlotIndex;
@@ -285,37 +335,61 @@ namespace Game
             int value = inventory.GetSlotValue(slot);
             if (Terrain.ExtractContents(value) != PistolaBlock.Index) return false;
 
+            AimInfo info;
+            // un gesto nuevo empieza si no hay datos o si pasaron mas de 0.3 s sin llamadas
+            if (!m_aims.TryGetValue(componentMiner, out info) || Time.FrameStartTime - info.Last > 0.3)
+            {
+                info = new AimInfo { Start = Time.FrameStartTime };
+                m_aims[componentMiner] = info;
+            }
+            info.Last = Time.FrameStartTime;
+
             switch (state)
             {
                 case AimState.InProgress:
-                    if (!PistolaBlock.IsLoaded(value))
                     {
-                        double t;
-                        if (!m_aimStart.TryGetValue(componentMiner, out t))
+                        int ammo = PistolaBlock.GetAmmo(value);
+                        if (!info.Reloaded && ammo < PistolaBlock.MaxAmmo && Time.FrameStartTime - info.Start >= ReloadHold)
                         {
-                            t = Time.FrameStartTime;
-                            m_aimStart[componentMiner] = t;
+                            int taken = TakeBullets(inventory, PistolaBlock.MaxAmmo - ammo);
+                            if (taken > 0)
+                            {
+                                info.Reloaded = true;
+                                int newValue = PistolaBlock.SetAmmo(value, ammo + taken);
+                                ReplaceSlot(inventory, slot, newValue);
+                                Say(componentMiner, "Recargada " + (ammo + taken) + "/" + PistolaBlock.MaxAmmo);
+                            }
+                            else if (!info.Warned && ammo == 0)
+                            {
+                                info.Warned = true;
+                                Say(componentMiner, "No tienes balas en el inventario");
+                            }
                         }
-                        if (Time.FrameStartTime - t >= ReloadTime && TakeBullet(inventory))
-                        {
-                            ReplaceSlot(inventory, slot, PistolaBlock.SetLoaded(value, true));
-                        }
+                        return true;
                     }
-                    return true;
 
                 case AimState.Cancelled:
-                    m_aimStart.Remove(componentMiner);
+                    // el juego puede cancelar el apuntado al cambiar la ranura al recargar: se conserva el gesto
+                    if (!info.Reloaded) m_aims.Remove(componentMiner);
                     return true;
 
                 case AimState.Completed:
-                    m_aimStart.Remove(componentMiner);
-                    if (PistolaBlock.IsLoaded(value))
                     {
-                        ReplaceSlot(inventory, slot, PistolaBlock.SetLoaded(value, false));
-                        Fire(start, direction, componentMiner);
-                        componentMiner.DamageActiveTool(1);
+                        m_aims.Remove(componentMiner);
+                        if (info.Reloaded) return true;   // este gesto fue para recargar, no dispara
+                        int ammo = PistolaBlock.GetAmmo(value);
+                        if (ammo > 0)
+                        {
+                            ReplaceSlot(inventory, slot, PistolaBlock.SetAmmo(value, ammo - 1));
+                            Fire(aim.Position, aim.Direction, componentMiner);
+                            componentMiner.DamageActiveTool(1);
+                        }
+                        else if (!info.Warned)
+                        {
+                            Say(componentMiner, "Sin balas. Mantén apuntando para recargar");
+                        }
+                        return true;
                     }
-                    return true;
             }
             return false;
         }
@@ -332,17 +406,19 @@ namespace Game
             try { m_subsystemAudio.PlaySound("Audio/MusketFire", 1f, m_random.Float(-0.1f, 0.1f), position, 15f, true); } catch (Exception) { }
         }
 
-        private static bool TakeBullet(IInventory inventory)
+        // Saca hasta "max" balas del inventario y devuelve cuantas saco
+        private static int TakeBullets(IInventory inventory, int max)
         {
-            for (int i = 0; i < inventory.SlotsCount; i++)
+            int taken = 0;
+            for (int i = 0; i < inventory.SlotsCount && taken < max; i++)
             {
-                if (inventory.GetSlotCount(i) > 0 && Terrain.ExtractContents(inventory.GetSlotValue(i)) == BalaPistolaBlock.Index)
-                {
-                    inventory.RemoveSlotItems(i, 1);
-                    return true;
-                }
+                if (Terrain.ExtractContents(inventory.GetSlotValue(i)) != BalaPistolaBlock.Index) continue;
+                int n = MathUtils.Min(inventory.GetSlotCount(i), max - taken);
+                if (n <= 0) continue;
+                inventory.RemoveSlotItems(i, n);
+                taken += n;
             }
-            return false;
+            return taken;
         }
 
         private static void ReplaceSlot(IInventory inventory, int slot, int newValue)
