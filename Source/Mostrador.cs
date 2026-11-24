@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Engine;
+using Engine.Graphics;
+using Engine.Media;
 using GameEntitySystem;
 using TemplatesDatabase;
 
