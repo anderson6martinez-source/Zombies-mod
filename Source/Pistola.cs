@@ -28,6 +28,8 @@ namespace Game
             Durability = 65;
             MaxStacking = 1;
             IsAimable = true;
+            IsPlaceable = false;   // es un item, no se coloca como bloque
+            IsCollidable = false;
         }
 
         public override void Initialize()
@@ -83,7 +85,7 @@ namespace Game
             return "Tools";
         }
 
-        // Receta: AAA / .BA / ...   (A = lingote de hierro, B = ironrod)
+        // Receta: AAA / ..B / ..A   (A = lingote de hierro, B = varilla)
         public override IEnumerable<CraftingRecipe> GetProceduralCraftingRecipes()
         {
             CraftingRecipe recipe = new CraftingRecipe();
@@ -94,9 +96,13 @@ namespace Game
             recipe.Ingredients[0] = "ironingot";
             recipe.Ingredients[1] = "ironingot";
             recipe.Ingredients[2] = "ironingot";
-            recipe.Ingredients[7] = "ironrod";   // fila 2, columna 2
-            recipe.Ingredients[8] = "ironingot"; // fila 2, columna 3
+            recipe.Ingredients[5] = Ingredientes.Varilla; // fila 2, columna 3
+            recipe.Ingredients[8] = "ironingot";          // fila 3, columna 3
             yield return recipe;
+
+            // Recetas de la armadura de piedra y las botas de velocidad (ver RecetasArmaduras)
+            foreach (CraftingRecipe r in RecetasArmaduras.Todas())
+                yield return r;
         }
     }
 
@@ -106,6 +112,12 @@ namespace Game
 
         private BlockMesh m_mesh = new BlockMesh();
         private Texture2D m_texture;
+
+        public BalaPistolaBlock()
+        {
+            IsPlaceable = false;   // es un item, no se coloca como bloque
+            IsCollidable = false;
+        }
 
         public override void Initialize()
         {
@@ -149,7 +161,7 @@ namespace Game
             return "Tools";
         }
 
-        // Receta: lingote de hierro + ironrod (en vertical) = 4 balas
+        // Receta: lingote de hierro + varilla (en horizontal) = 4 balas
         public override IEnumerable<CraftingRecipe> GetProceduralCraftingRecipes()
         {
             CraftingRecipe recipe = new CraftingRecipe();
@@ -157,9 +169,85 @@ namespace Game
             recipe.ResultCount = 4;
             recipe.RequiredHeatLevel = 0f;
             recipe.Description = "Balas de pistola";
-            recipe.Ingredients[0] = "ironingot"; // fila 1, columna 1
-            recipe.Ingredients[6] = "ironrod";   // fila 2, columna 1
+            recipe.Ingredients[0] = "ironingot";          // fila 1, columna 1
+            recipe.Ingredients[1] = Ingredientes.Varilla; // fila 1, columna 2
             yield return recipe;
+        }
+    }
+
+    // Ids de crafteo de los items del juego. Se buscan por nombre en vez de adivinarlos.
+    public static class Ingredientes
+    {
+        private static string m_varilla, m_adoquin, m_tablon, m_palo;
+
+        public static string Varilla { get { return m_varilla ?? (m_varilla = Buscar("ironrod", "Rod")); } }
+        public static string Adoquin { get { return m_adoquin ?? (m_adoquin = Buscar("cobblestone", "Cobblestone")); } }
+        public static string Tablon { get { return m_tablon ?? (m_tablon = Buscar("planks", "Planks", "Plank")); } }
+        public static string Palo { get { return m_palo ?? (m_palo = Buscar("stick", "Stick")); } }
+
+        // Busca un bloque cuyo nombre de clase (sin "Block") o nombre en ingles coincida y devuelve su id de crafteo.
+        private static string Buscar(string respaldo, params string[] nombres)
+        {
+            foreach (Block block in BlocksManager.Blocks)
+            {
+                if (block == null) continue;
+                string clase = block.GetType().Name;
+                if (clase.EndsWith("Block")) clase = clase.Substring(0, clase.Length - 5);
+                string nombre = block.DefaultDisplayName ?? "";
+                foreach (string n in nombres)
+                {
+                    if (clase.Equals(n, StringComparison.OrdinalIgnoreCase) || nombre.Equals(n, StringComparison.OrdinalIgnoreCase))
+                    {
+                        string id = block.GetCraftingId(Terrain.MakeBlockValue(block.BlockIndex, 0, 0));
+                        if (!string.IsNullOrEmpty(id)) return id;
+                    }
+                }
+            }
+            return respaldo;
+        }
+    }
+
+    // Recetas de ropa. La ropa se define en Piedra.clo (Index 38 a 42); aqui solo se crean las recetas.
+    // La cuadricula es de 3x3. Cada patron son 9 letras, fila por fila:
+    // C = adoquin, P = tablon, S = palo, . = vacio
+    public static class RecetasArmaduras
+    {
+        // Index de cada prenda en Piedra.clo
+        public const int Casco = 38;
+        public const int Pechera = 39;
+        public const int Pantalones = 40;
+        public const int Botas = 41;
+        public const int BotasVelocidad = 42;
+
+        public static IEnumerable<CraftingRecipe> Todas()
+        {
+            // Casco: 3 adoquines, 2 tablones, 1 palo      CCC / PSP / ...
+            yield return Hacer(Casco, "Casco de piedra", "CCCPSP...");
+            // Pechera: 6 adoquines, 1 tablon, 2 palos      CSC / CPC / CSC
+            yield return Hacer(Pechera, "Pechera de piedra", "CSCCPCCSC");
+            // Pantalones: 4 adoquines, 2 tablones, 1 palo  C.C / PSP / C.C
+            yield return Hacer(Pantalones, "Pantalones de piedra", "C.CPSPC.C");
+            // Botas de piedra: 5 adoquines, 3 tablones, 1 palo   CSC / CCC / PPP
+            yield return Hacer(Botas, "Botas de piedra", "CSCCCCPPP");
+            // Botas de velocidad: 5 tablones, 3 palos, 1 adoquin  PCP / PPP / SSS
+            yield return Hacer(BotasVelocidad, "Botas de velocidad", "PCPPPPSSS");
+        }
+
+        private static CraftingRecipe Hacer(int clothingIndex, string descripcion, string patron)
+        {
+            CraftingRecipe recipe = new CraftingRecipe();
+            recipe.ResultValue = Terrain.MakeBlockValue(ClothingBlock.Index, 0, clothingIndex);
+            recipe.ResultCount = 1;
+            recipe.RequiredHeatLevel = 0f;
+            recipe.Description = descripcion;
+            for (int i = 0; i < 9; i++)
+            {
+                char c = patron[i];
+                if (c == 'C') recipe.Ingredients[i] = Ingredientes.Adoquin;
+                else if (c == 'P') recipe.Ingredients[i] = Ingredientes.Tablon;
+                else if (c == 'S') recipe.Ingredients[i] = Ingredientes.Palo;
+            }
+            return recipe;
         }
     }
 

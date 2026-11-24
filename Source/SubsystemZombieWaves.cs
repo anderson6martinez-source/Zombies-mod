@@ -53,6 +53,7 @@ namespace Game
             public ComponentCreature Creature;
         }
         Dictionary<Entity, Tracked> m_tracked = new Dictionary<Entity, Tracked>();
+        HashSet<Entity> m_deathHandled = new HashSet<Entity>(); // muertes ya procesadas (cada una explota/revive solo una vez)
         List<Vector3> m_reviveQueue = new List<Vector3>();
         List<float> m_reviveTimes = new List<float>();
         float m_scanTimer;
@@ -114,10 +115,15 @@ namespace Game
             if (m_scanTimer <= 0f)
             {
                 m_scanTimer = 0.25f;
+                m_deathHandled.RemoveWhere(e => !e.IsAddedToProject); // limpiar los que ya desaparecieron
                 foreach (Entity entity in Project.Entities)
                 {
-                    if (!m_tracked.ContainsKey(entity) && IsSpecial(entity.ValuesDictionary.DatabaseObject.Name))
-                        Track(entity, false);
+                    if (m_tracked.ContainsKey(entity) || !IsSpecial(entity.ValuesDictionary.DatabaseObject.Name)) continue;
+                    // un zombi ya muerto (todavia en el mundo unos segundos) no se vuelve a seguir:
+                    // si no, se volvia a contar su muerte y renacia sin parar
+                    ComponentHealth h = entity.FindComponent<ComponentHealth>(false);
+                    if (h != null && h.Health <= 0f) continue;
+                    Track(entity, false);
                 }
             }
 
@@ -131,7 +137,7 @@ namespace Game
 
                 if (t.Health.Health <= 0f)
                 {
-                    OnDeath(t);
+                    if (m_deathHandled.Add(entity)) OnDeath(t);
                     if (done == null) done = new List<Entity>();
                     done.Add(entity);
                 }
