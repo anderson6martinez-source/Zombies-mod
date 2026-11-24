@@ -384,6 +384,7 @@
               <Parameter Name="LadderSpeed" Guid="8c0e9c28-4683-4f69-bcb6-3c00bfbd3b79" Value="2" Type="float" />
             </MemberComponentTemplate>
             <MemberComponentTemplate Name="HumanModel" Guid="f51f1335-ecac-4576-b448-e1b64ca65f5e" InheritanceParent="0566662e-bb24-45f9-84d8-f3c1e5d083df">
+              <Parameter Name="Class" Guid="8a3f9114-c8d9-49f3-985e-b34895c76df4" Value="Game.ComponentTorsoModel" Type="string" />
               <Parameter Name="MoveLegWhenFeeding" Guid="02e94258-191e-4861-a61f-3f7f635f7679" Value="True" Type="bool" />
               <Parameter Name="WalkLegsAngle" Guid="818c4199-e91c-4625-9408-3402a63329f8" Value="0.35" Type="float" />
               <Parameter Name="TextureOverride" Guid="34d95122-dc13-4d61-b88d-9dd4fb0380bd" Value="Textures/Creatures/ZombieBruto" Type="string" />
@@ -452,6 +453,7 @@
               <Parameter Name="LadderSpeed" Guid="c0086b33-7f70-46c4-9002-46e2f83f5524" Value="2" Type="float" />
             </MemberComponentTemplate>
             <MemberComponentTemplate Name="HumanModel" Guid="46361e61-845d-4927-8a54-ca22129b5492" InheritanceParent="0566662e-bb24-45f9-84d8-f3c1e5d083df">
+              <Parameter Name="Class" Guid="e5fe063a-e990-4438-bac8-7f5419444a72" Value="Game.ComponentTorsoModel" Type="string" />
               <Parameter Name="MoveLegWhenFeeding" Guid="970e85da-0380-4f6c-b1e5-7173bbb6b0d7" Value="True" Type="bool" />
               <Parameter Name="WalkLegsAngle" Guid="dcb5759e-1840-41dd-ae7e-8b2f5e32cf14" Value="0.35" Type="float" />
               <Parameter Name="TextureOverride" Guid="5ca9776c-96ed-485a-9776-2a601da9126f" Value="Textures/Creatures/ZombieGordo" Type="string" />
