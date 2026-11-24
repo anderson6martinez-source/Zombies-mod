@@ -127,7 +127,7 @@ namespace Game
             ComponentPlayer player = componentMiner.ComponentPlayer;
             if (player == null) return false;
             List<Trade> trades = BuildTrades();
-            DialogsManager.ShowDialog(player.View.GameWidget, new ListSelectionDialog(
+            DialogsManager.ShowDialog(player.GameWidget, new ListSelectionDialog(
                 "Intercambios", trades, 56f,
                 delegate (object o)
                 {
