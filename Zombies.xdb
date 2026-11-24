@@ -44,6 +44,7 @@
               <Parameter Name="LadderSpeed" Guid="83f994ef-c91b-409b-94d3-22882d97e4ee" Value="2" Type="float" />
             </MemberComponentTemplate>
             <MemberComponentTemplate Name="HumanModel" Guid="285299ff-8ad5-4c4e-af84-fbec96a0f80f" InheritanceParent="0566662e-bb24-45f9-84d8-f3c1e5d083df">
+              <Parameter Name="Class" Guid="11e8b5a1-685a-4c78-b942-18525e452b91" Value="Game.ComponentZombieHumanModel" Type="string" />
               <Parameter Name="MoveLegWhenFeeding" Guid="126005c1-4801-4237-954d-80c81293707f" Value="True" Type="bool" />
               <Parameter Name="WalkLegsAngle" Guid="8c2ba89d-ddbf-438b-baf2-190e72b74385" Value="0.35" Type="float" />
               <Parameter Name="TextureOverride" Guid="ab72ce08-c54b-4275-a561-f0f573a9e745" Value="Textures/Creatures/ZombieNormal" Type="string" />
@@ -112,6 +113,7 @@
               <Parameter Name="LadderSpeed" Guid="ae4f16b9-d58a-4cf6-a6a4-957c50dd4c0e" Value="2" Type="float" />
             </MemberComponentTemplate>
             <MemberComponentTemplate Name="HumanModel" Guid="60041646-2ae5-4baf-bcf0-ee414af40d4e" InheritanceParent="0566662e-bb24-45f9-84d8-f3c1e5d083df">
+              <Parameter Name="Class" Guid="5d6c30db-abd4-4397-904c-4228920d18b6" Value="Game.ComponentZombieHumanModel" Type="string" />
               <Parameter Name="MoveLegWhenFeeding" Guid="0ec6d3c7-1cb7-4787-a525-b51402c305be" Value="True" Type="bool" />
               <Parameter Name="WalkLegsAngle" Guid="d13b0524-934b-41a5-8de3-7a723ef395d9" Value="0.35" Type="float" />
               <Parameter Name="TextureOverride" Guid="35874f23-c5a1-440a-8212-1fa4d3c902b0" Value="Textures/Creatures/ZombieCorredor" Type="string" />
@@ -180,6 +182,7 @@
               <Parameter Name="LadderSpeed" Guid="acd5127f-6855-4c42-bee0-809486024b0e" Value="2" Type="float" />
             </MemberComponentTemplate>
             <MemberComponentTemplate Name="HumanModel" Guid="4d715778-cac9-43ce-a064-a6f7744559da" InheritanceParent="0566662e-bb24-45f9-84d8-f3c1e5d083df">
+              <Parameter Name="Class" Guid="b58bf90b-44de-4b6c-b0f2-ef18f04cc866" Value="Game.ComponentZombieHumanModel" Type="string" />
               <Parameter Name="MoveLegWhenFeeding" Guid="780e107e-fad6-4ebb-baf1-3dc62fa085f2" Value="True" Type="bool" />
               <Parameter Name="WalkLegsAngle" Guid="f8c23766-ee2e-4e52-b9bb-358d5d4ad595" Value="0.35" Type="float" />
               <Parameter Name="TextureOverride" Guid="6227978b-c106-4a59-8299-be31b78e729a" Value="Textures/Creatures/ZombieCorredor2" Type="string" />
@@ -248,6 +251,7 @@
               <Parameter Name="LadderSpeed" Guid="7e02ec29-cb7b-44c4-b875-3d3be9ce4d3c" Value="2" Type="float" />
             </MemberComponentTemplate>
             <MemberComponentTemplate Name="HumanModel" Guid="f62cbe59-b864-4494-ac5e-34d1463203a3" InheritanceParent="0566662e-bb24-45f9-84d8-f3c1e5d083df">
+              <Parameter Name="Class" Guid="b62939a2-178d-4913-9e6b-f2f68fc5824f" Value="Game.ComponentZombieHumanModel" Type="string" />
               <Parameter Name="MoveLegWhenFeeding" Guid="dff17a2d-d707-4ae7-acc2-b54fb103ba41" Value="True" Type="bool" />
               <Parameter Name="WalkLegsAngle" Guid="f7210598-99ed-4105-8790-a7bf85285c7c" Value="0.35" Type="float" />
               <Parameter Name="TextureOverride" Guid="d78f2f7a-e6f5-4238-b4dc-b3ecdf19405c" Value="Textures/Creatures/ZombieCorredor3" Type="string" />
@@ -316,6 +320,7 @@
               <Parameter Name="LadderSpeed" Guid="36a6b7c9-7735-47ce-83bf-125a748d4766" Value="2" Type="float" />
             </MemberComponentTemplate>
             <MemberComponentTemplate Name="HumanModel" Guid="e76d3bdf-0dad-4996-8eef-404b1f8b4239" InheritanceParent="0566662e-bb24-45f9-84d8-f3c1e5d083df">
+              <Parameter Name="Class" Guid="2eabcdb4-9d75-4490-878a-be5a3be04415" Value="Game.ComponentZombieHumanModel" Type="string" />
               <Parameter Name="MoveLegWhenFeeding" Guid="02e3e02a-0c81-40af-907e-098055611867" Value="True" Type="bool" />
               <Parameter Name="WalkLegsAngle" Guid="dda4fc8b-8f7f-449f-ba65-1085f7607cb2" Value="0.35" Type="float" />
               <Parameter Name="TextureOverride" Guid="c6de2928-e705-4892-a7d1-d0e53919892c" Value="Textures/Creatures/ZombieCorredor4" Type="string" />
@@ -384,6 +389,7 @@
               <Parameter Name="LadderSpeed" Guid="8c0e9c28-4683-4f69-bcb6-3c00bfbd3b79" Value="2" Type="float" />
             </MemberComponentTemplate>
             <MemberComponentTemplate Name="HumanModel" Guid="f51f1335-ecac-4576-b448-e1b64ca65f5e" InheritanceParent="0566662e-bb24-45f9-84d8-f3c1e5d083df">
+              <Parameter Name="Class" Guid="1afe8fbf-c507-4bb6-8163-074ed370da9b" Value="Game.ComponentZombieHumanModel" Type="string" />
               <Parameter Name="MoveLegWhenFeeding" Guid="02e94258-191e-4861-a61f-3f7f635f7679" Value="True" Type="bool" />
               <Parameter Name="WalkLegsAngle" Guid="818c4199-e91c-4625-9408-3402a63329f8" Value="0.35" Type="float" />
               <Parameter Name="TextureOverride" Guid="34d95122-dc13-4d61-b88d-9dd4fb0380bd" Value="Textures/Creatures/ZombieBruto" Type="string" />
@@ -452,6 +458,7 @@
               <Parameter Name="LadderSpeed" Guid="c0086b33-7f70-46c4-9002-46e2f83f5524" Value="2" Type="float" />
             </MemberComponentTemplate>
             <MemberComponentTemplate Name="HumanModel" Guid="46361e61-845d-4927-8a54-ca22129b5492" InheritanceParent="0566662e-bb24-45f9-84d8-f3c1e5d083df">
+              <Parameter Name="Class" Guid="85b8c529-6e1b-4ea8-bfee-8f9ae9c308a4" Value="Game.ComponentZombieHumanModel" Type="string" />
               <Parameter Name="MoveLegWhenFeeding" Guid="970e85da-0380-4f6c-b1e5-7173bbb6b0d7" Value="True" Type="bool" />
               <Parameter Name="WalkLegsAngle" Guid="dcb5759e-1840-41dd-ae7e-8b2f5e32cf14" Value="0.35" Type="float" />
               <Parameter Name="TextureOverride" Guid="5ca9776c-96ed-485a-9776-2a601da9126f" Value="Textures/Creatures/ZombieGordo" Type="string" />
@@ -520,6 +527,7 @@
               <Parameter Name="LadderSpeed" Guid="caf82114-db73-44cc-9758-30a57801dca8" Value="2" Type="float" />
             </MemberComponentTemplate>
             <MemberComponentTemplate Name="HumanModel" Guid="740f6af2-f668-44fa-821f-c8dc53ac399f" InheritanceParent="0566662e-bb24-45f9-84d8-f3c1e5d083df">
+              <Parameter Name="Class" Guid="6f099962-b9b5-43eb-843f-0dce592b3454" Value="Game.ComponentZombieHumanModel" Type="string" />
               <Parameter Name="MoveLegWhenFeeding" Guid="fcf55dcd-03bc-4a2c-adef-8aac06fc7c1c" Value="True" Type="bool" />
               <Parameter Name="WalkLegsAngle" Guid="ec0f127c-8eee-4426-ab60-8a98bee5ff0c" Value="0.35" Type="float" />
               <Parameter Name="TextureOverride" Guid="bd771b35-356c-48ef-9ab8-e19e6f6665d2" Value="Textures/Creatures/ZombieEscupidor" Type="string" />
@@ -588,6 +596,7 @@
               <Parameter Name="LadderSpeed" Guid="a073873f-59c3-4877-9822-ace4b73e86ed" Value="2" Type="float" />
             </MemberComponentTemplate>
             <MemberComponentTemplate Name="HumanModel" Guid="7c123248-4127-41f3-88ca-b9ea46de3df7" InheritanceParent="0566662e-bb24-45f9-84d8-f3c1e5d083df">
+              <Parameter Name="Class" Guid="7edcd6b1-b3b0-4c09-b78d-54b80d1185be" Value="Game.ComponentZombieHumanModel" Type="string" />
               <Parameter Name="MoveLegWhenFeeding" Guid="409d0916-dc10-4637-83ed-ba55c5054fd9" Value="True" Type="bool" />
               <Parameter Name="WalkLegsAngle" Guid="c35625db-275e-4b64-a21b-75b800bc5e2a" Value="0.35" Type="float" />
               <Parameter Name="TextureOverride" Guid="51d7d903-37eb-42b1-b692-a13019032ea7" Value="Textures/Creatures/ZombieRenacido" Type="string" />
@@ -614,6 +623,15 @@
 					</EntityTemplate>
           <EntityTemplate Name="Superviviente" Guid="26ef81c2-691b-4386-b953-744ff77e6d22" InheritanceParent="e4275171-a39f-413f-8888-4c472868364d">
             <MemberComponentTemplate Name="OnFire" Guid="893b7aa2-d02b-47a1-b52b-4c73fee0d429" />
+            <MemberComponentTemplate Name="ChaseBehavior" Guid="7133edde-fe7e-46f3-a219-11d3e91a5460" InheritanceParent="31894441-d90a-4549-9264-db9dbe20e234">
+              <Parameter Name="AutoChaseMask" Guid="c8decb87-e9dc-461f-911b-35a14ab1eeeb" Value="LandPredator" Type="Game.CreatureCategory" />
+              <Parameter Name="ChaseWhenAttackedProbability" Guid="ae20ecc6-07e9-444d-b2b6-d617936fe297" Value="1" Type="float" />
+              <Parameter Name="ChaseNonPlayerProbability" Guid="a9f8c722-057c-4499-b7e9-78a89f6d13dc" Value="1" Type="float" />
+              <Parameter Name="DayChaseRange" Guid="784a9df6-4096-46f4-ae0e-439c94e0175e" Value="15" Type="float" />
+              <Parameter Name="NightChaseRange" Guid="1d8bd041-10bd-4b4b-8bd6-5e79935aebb1" Value="15" Type="float" />
+              <Parameter Name="DayChaseTime" Guid="6e6df871-684c-44ec-ba59-8c64f63b635a" Value="120" Type="float" />
+              <Parameter Name="NightChaseTime" Guid="2748c3cb-25fb-41e8-9333-018c7084167a" Value="120" Type="float" />
+            </MemberComponentTemplate>
             <MemberComponentTemplate Name="Health" Guid="e22b0d20-7b19-4bef-b624-8f81ce8122c5">
               <Parameter Name="AttackResilience" Guid="094ffc5b-b947-4969-b76f-5c6ba1f57d87" Value="25" Type="float" />
               <Parameter Name="FireResilience" Guid="0498b120-aff9-4b30-8eab-ef0864d254b6" Value="100" Type="float" />
